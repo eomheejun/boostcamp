@@ -14,5 +14,5 @@ Random Seed : 42
 
 기타 시도 : Model Classifier 가중치 초기화
 
-
+앙상블 : 최종 csv 파일 하드보팅 
 
