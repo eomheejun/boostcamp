@@ -48,15 +48,47 @@
 
       GoogleNet시리즈와 Auto-generated architectures에서 "multipath"구조가 사용된다. 많은 소규모 연산자(“fragmented operators”)가 큰 연산자를 사용하게 되는데 예를들어 NASNET-A에서 여러 conv, pooling 연산이 하나의 block에 포함되어 있고 반대로 ResNet은 규칙적인 구조로 이루어져 있다. 
 
-      <a href="https://ibb.co/0qNB7pk"><img src="https://i.ibb.co/TcXKfDZ/2021-06-03-00-59-43.png" alt="2021-06-03-00-59-43" border="0"></a>
-
-      소규모 연산자를 사용하면 정확도는 좋아지지만 GPU환경에서는 
-
-      효율성이 떨어진다. 
+      <a href="https://ibb.co/z4Dgbr8"><img src="https://i.ibb.co/crV9t1b/2021-06-03-22-03-09.png" alt="2021-06-03-22-03-09" border="0"></a>
 
       
 
+      <a href="https://ibb.co/0qNB7pk"><img src="https://i.ibb.co/TcXKfDZ/2021-06-03-00-59-43.png" alt="2021-06-03-00-59-43" border="0"></a>
+
+      소규모 연산자를 사용하면 정확도는 좋아지지만 GPU환경에서는 효율성이 떨어진다. 
+
+   4 .G4) Element-wise operations are non-negligible.
+
+   ​	<a href="https://ibb.co/7JmS9Tp"><img src="https://i.ibb.co/GvSdh1M/2021-06-03-00-06-17.png" alt="2021-06-03-00-06-17" border="0"></a>
+   
+   위의 그림처럼 연산량을 계산할때 element-wise(ReLU, AddTensor, AddBias, etc)를 고려하지 않지만 실제로 각 플랫폼에서 적지 않은 영향을 끼친다. FLOPs에서는 작은 영향을 끼치나 MAC에서는 많은 영항을 끼친다. depth-wise conv 역시 FLOPs대비 MAC이높다.
+   
+   <a href="https://ibb.co/7G16XDQ"><img src="https://i.ibb.co/khSWxTJ/2021-06-03-22-08-17.png" alt="2021-06-03-22-08-17" border="0"></a>
+   
+   위의 표에서처럼 elelment-wise를 사용하지 않을 때 속도가 가장 빠르다. 
+   
    
 
-   
+3. ShuffleNet V2: an Efficient Architecture
+
+   ShuffleNET V1에서는 pointwise group convolutions 과 bottleneck-like structures, “channel shuffle” operation을 사용했다. 
+
+   <a href="https://ibb.co/N1yxvPk"><img src="https://i.ibb.co/5YRT0yz/2021-06-03-22-50-30.png" alt="2021-06-03-22-50-30" border="0"></a>
+
+   왼쪽 2개는 Shufflenet v1이고 오른쪽 2개는 Shufflenet v2이다.  Shufflenet V2에서는 V1과 다르게 channel split이란 개념을 적용했는데 입력채널을 2개로 split하여 한쪽은 그대로 가고 다른 한쪽은 1x1 conv, 3x3 dwconv, 1x1 conv를 거쳐 두개가 다시 concat되어 channel shuffle을 통해 값을 섞는다. d같은 경우에는 channel split이 일어나지 않기 때문에 input channel에 비해 output channel의 수가 2배가 된다. 
+
+   <a href="https://ibb.co/r2VnNjV"><img src="https://i.ibb.co/9H7RSD7/2021-06-03-22-54-23.png" alt="2021-06-03-22-54-23" border="0"></a>
+
+   위의 그림에서 a는 residual을 사용했고 b에서는 se 그리고 c에서는 a와 b를 섞은 구조다. 
+
+   <a href="https://ibb.co/B3Fz71c"><img src="https://i.ibb.co/V95jhKJ/2021-06-04-00-20-38.png" alt="2021-06-04-00-20-38" border="0"></a>
+
+   shufflenet v2 아키텍처는 위와 같고 차이점은 global average pooling 전에 1x1 conv를 추가하였다.
+
+
+
+
+
+
+
+
 
